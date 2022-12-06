@@ -1,14 +1,18 @@
-import { child, get, push, ref, remove, set } from "firebase/database"
-import React, { useEffect, useState } from "react"
-import { FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { child, get, push, ref, remove, set, update } from "firebase/database"
+import React, { useEffect, useRef, useState } from "react"
+import { FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Keyboard } from "react-native"
 import TaskList from "./src/components/TaskList"
 import { database } from "./src/firebaseConnection"
 
 export default function App() {
 
+  const inputRef = useRef(null)
+
   const [newTask, setNewTask] = useState('')
 
   const [taskList, setTaskList] = useState([])
+  const [editKey, setEditKey] = useState('')
+  const [editing, setEditing] = useState(false)
 
   useEffect(() => {
     get(child(database,'tasks'))
@@ -35,6 +39,20 @@ export default function App() {
   },[taskList])
 
   const addTask = () => {
+
+    if(editKey !== ''){
+      update(child(child(database,'tasks'),editKey),{
+        taskName: newTask
+      })
+      .then(res => console.log('foi'))
+      .catch(err => console.log(err))
+
+      Keyboard.dismiss()
+      setNewTask('')
+      setEditKey('')
+      setEditing(false)
+      return
+    }
     // let task = push(database,'tasks').key
     let key = push(child(database,'tasks'),{
       taskName: newTask
@@ -43,6 +61,16 @@ export default function App() {
       key: key,
       taskName: newTask
     })
+
+  }
+
+  const editTask = (data) => {
+    console.log(data)
+    setEditing(true)
+    setEditKey(data.item.key)
+    setNewTask(data.item.taskName)
+    inputRef.current.focus()
+    
   }
 
   const deleteTask = (key) => {
@@ -55,12 +83,16 @@ export default function App() {
 
   return(
     <SafeAreaView>
+      {editing &&
+        <Text style={styles.editing}>Você está editando uma tarefa</Text>
+      }
       <View style={styles.containerTask}>
         <TextInput
           style={styles.input}
           placeholder="o que vai fazer hoje?"
           value={newTask}
           onChangeText={text => setNewTask(text)}
+          ref={inputRef}
         />
         <TouchableOpacity style={styles.addTaskButton} onPress={() => addTask()}>
           <Text style={styles.addTask}>+</Text>
@@ -70,7 +102,7 @@ export default function App() {
       <FlatList
       keyExtractor={item => item.key}
       data={taskList}
-      renderItem={item => <TaskList deleteTask={deleteTask} task={item}/>}
+      renderItem={item => <TaskList editTask={editTask} deleteTask={deleteTask} task={item}/>}
       />
     </SafeAreaView>
   )
@@ -98,6 +130,10 @@ const styles = StyleSheet.create({
     color:'#FFFFFF',
     padding:12
   },
-  addTaskButton:{
+  editing:{
+    textAlign:'center',
+    fontSize:20,
+    color:'#FF1100',
+    marginTop:12
   }
 })

@@ -4,18 +4,17 @@ import Feather from 'react-native-vector-icons/Feather'
 
 export default function TaskList({
   task,
-  deleteTask
+  deleteTask,
+  editTask
 }) {
-
-
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => deleteTask(task.item.key)}>
-        <Feather name="trash" style={styles.trashIcon}/>
+        <Feather name="trash-2" color={'#FFFFFF'} size={30}/>
       </TouchableOpacity>
       <View>
-        <TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => editTask(task)}>
           <View style={styles.taskNameContainer}>
             <Text style={styles.taskName}>{task.item.taskName}</Text>
           </View>
@@ -29,7 +28,8 @@ const styles = StyleSheet.create({
   container:{
     flexDirection:'row',
     backgroundColor:'#222',
-    alignItems:'center'
+    alignItems:'center',
+    paddingLeft:8
   },
   trashIcon:{
     fontSize:40,
