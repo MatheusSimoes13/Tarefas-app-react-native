@@ -1,4 +1,4 @@
-import { child, get, push, ref, set } from "firebase/database"
+import { child, get, push, ref, remove, set } from "firebase/database"
 import React, { useEffect, useState } from "react"
 import { FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import TaskList from "./src/components/TaskList"
@@ -42,7 +42,9 @@ export default function App() {
   }
 
   const deleteTask = (key) => {
-    console.log(key)
+    remove(child(child(database, 'tasks'),key))
+    .then(res => console.log(res))
+    .catch(err  => console.log(err))
   }
 
   // console.log(taskList)
@@ -64,7 +66,7 @@ export default function App() {
       <FlatList
       keyExtractor={item => item.key}
       data={taskList}
-      renderItem={item => <TaskList task={item}/>}
+      renderItem={item => <TaskList deleteTask={deleteTask} task={item}/>}
       />
     </SafeAreaView>
   )

@@ -2,18 +2,22 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import Feather from 'react-native-vector-icons/Feather'
 
-export default function TaskList(task) {
+export default function TaskList({
+  task,
+  deleteTask
+}) {
 
-  console.log(task)
+
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => deleteTask(task.item.key)}>
         <Feather name="trash" style={styles.trashIcon}/>
       </TouchableOpacity>
       <View>
-        <TouchableWithoutFeedback >
+        <TouchableWithoutFeedback>
           <View style={styles.taskNameContainer}>
-            <Text style={styles.taskName}>{task.task.item.taskName}</Text>
+            <Text style={styles.taskName}>{task.item.taskName}</Text>
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -23,15 +27,20 @@ export default function TaskList(task) {
 
 const styles = StyleSheet.create({
   container:{
-    flexDirection:'row'
+    flexDirection:'row',
+    backgroundColor:'#222',
+    alignItems:'center'
   },
   trashIcon:{
-    fontSize:50
+    fontSize:40,
+    color:'#FFFFFF'
   },
   taskName:{
-    fontSize:30
+    fontSize:30,
+    color:'#FFFFFF'
   },
   taskNameContainer:{
-    alignItems:'center'
+    alignItems:'center',
+    marginLeft:15
   }
 })
