@@ -61,11 +61,15 @@ export default function App() {
       key: key,
       taskName: newTask
     })
-
+    let array = taskList
+    array.push({
+      key: key,
+      taskName: newTask
+    })
+    setTaskList(array)
   }
 
   const editTask = (data) => {
-    console.log(data)
     setEditing(true)
     setEditKey(data.item.key)
     setNewTask(data.item.taskName)
@@ -77,8 +81,8 @@ export default function App() {
     remove(child(child(database, 'tasks'),key))
     .then(res => console.log(res))
     .catch(err  => console.log(err))
+    setTaskList(taskList.filter(key => key!=key))
   }
-
   // console.log(taskList)
 
   return(
@@ -114,8 +118,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
     justifyContent:'center',
     padding:10,
-    height:100,
-    paddingVertical:20
+    paddingVertical:20,
   },
   input:{
     borderColor:'#000000',
@@ -123,12 +126,13 @@ const styles = StyleSheet.create({
     padding:10,
     marginRight:5,
     backgroundColor:'#FFFFFF',
+    width:'80%'
   },
   addTask:{
     fontSize:20,
     backgroundColor:'#000000',
     color:'#FFFFFF',
-    padding:12
+    padding:12,
   },
   editing:{
     textAlign:'center',
