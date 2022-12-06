@@ -32,13 +32,17 @@ export default function App() {
     .catch(error => {
       console.log(error)
     })
-  },[])
+  },[taskList])
 
   const addTask = () => {
     // let task = push(database,'tasks').key
-    push(child(database,'tasks'),{
+    let key = push(child(database,'tasks'),{
       taskName: newTask
     }).key
+    setTaskList(taskList,{
+      key: key,
+      taskName: newTask
+    })
   }
 
   const deleteTask = (key) => {
